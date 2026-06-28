@@ -53,6 +53,17 @@ def clean_text(raw: str) -> str:
 # ── مرحله ۳: جدا کردن سوالات با AI ──────────────────────────────
 
 def _call_api(system_prompt: str, user_prompt: str) -> str:
+    # هدرهای استخراج شده از درخواست موفق شما
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json, text/plain, */*",
+        "Origin": "https://chat18.aichatos.xyz",
+        "Referer": "https://chat18.aichatos.xyz/",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Connection": "keep-alive",
+    }
+    
     payload = {
         "prompt": f"{system_prompt}\n\n{user_prompt}",
         "userId": USER_ID,
@@ -60,9 +71,18 @@ def _call_api(system_prompt: str, user_prompt: str) -> str:
         "withoutContext": True,
         "stream": False,
     }
-    resp = requests.post(API_URL, json=payload, timeout=120)
+    
+    resp = requests.post(API_URL, json=payload, headers=headers, timeout=120)
     resp.raise_for_status()
-    return resp.text
+    
+    text = resp.text.strip()
+    
+    # فقط برای اطمینان در آینده
+    if not text:
+        log.error("API یک پاسخ خالی برگاند. کد وضعیت: %s", resp.status_code)
+        raise ValueError("پاسخ خالی از سمت API")
+        
+    return text
 
 
 def _parse_json(text: str):

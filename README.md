@@ -207,6 +207,5 @@ Edit `config.py` to customize:
 **If you found this useful, leave a ⭐**
 
 </div>
-```
 
 ---
