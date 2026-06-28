@@ -1,0 +1,6 @@
+.venv/
+.cache/
+reports/
+pycache/
+*.pyc
+*.pdf
